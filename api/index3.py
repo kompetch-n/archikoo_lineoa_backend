@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request
-from pydantic import BaseModel
 import requests
 import os
 
@@ -10,11 +9,8 @@ LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 LINE_API_URL = "https://api.line.me/v2/bot/message/push"
 
 # 🔹 เก็บ userId ที่เคยทักมา (ตัวอย่างชั่วคราว)
-# LINE_USERS = set()
+LINE_USERS = set()
 
-class NotifyOrderRequest(BaseModel):
-    order_id: str
-    user_id: str
 
 def send_line_message(user_id: str, message: str):
     headers = {
@@ -42,23 +38,28 @@ def health():
 
 
 @app.post("/notify-order")
-def notify_order(data: NotifyOrderRequest):
+def notify_order(order_id: str):
     message = f"""
 🛒 มีคำสั่งซื้อใหม่!
 ━━━━━━━━━━━━
-📄 Order ID: {data.order_id}
+📄 Order ID: {order_id}
 ✅ สถานะ: ยืนยันการสั่งซื้อแล้ว
 ━━━━━━━━━━━━
 """
 
-    status, result = send_line_message(data.user_id, message)
+    results = []
+    for user_id in LINE_USERS:
+        status, result = send_line_message(user_id, message)
+        results.append({
+            "user_id": user_id,
+            "status": status
+        })
 
     return {
-        "success": status == 200,
-        "user_id": data.user_id,
-        "status_code": status,
-        "response": result
+        "sent_to": len(LINE_USERS),
+        "results": results
     }
+
 
 @app.post("/line/webhook")
 async def line_webhook(request: Request):
