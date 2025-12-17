@@ -69,9 +69,8 @@ def notify_order(data: NotifyOrderRequest):
 
     return {
         "success": status == 200,
-        "user_id": data.user_id,
-        "status_code": status,
-        "response": result
+        "line_status": status,
+        "line_response": result
     }
 
 @app.post("/line/webhook")
