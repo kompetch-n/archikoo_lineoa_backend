@@ -24,7 +24,7 @@ LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 LINE_API_URL = "https://api.line.me/v2/bot/message/push"
 
 # 🔹 เก็บ userId ที่เคยทักมา (ตัวอย่างชั่วคราว)
-LINE_USERS = set()
+# LINE_USERS = set()
 
 class NotifyOrderRequest(BaseModel):
     user_id: str
