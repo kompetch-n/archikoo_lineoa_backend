@@ -1,6 +1,10 @@
 from fastapi import FastAPI, Request
 import requests
 import os
+from dotenv import load_dotenv
+
+# โหลดค่า .env
+load_dotenv()
 
 app = FastAPI()
 
@@ -46,18 +50,22 @@ def notify_order(order_id: str):
         "status_code": status,
         "response": result
     }
-
-
+    
 @app.post("/line/webhook")
 async def line_webhook(request: Request):
     body = await request.json()
 
     events = body.get("events", [])
     for event in events:
+        # 📌 ตอน Add friend
         if event["type"] == "follow":
             user_id = event["source"]["userId"]
             print("NEW USER:", user_id)
 
+            # 👉 บันทึก user_id ลง database ตรงนี้
+            # save_user_to_db(user_id)
+
+        # 📌 ตอนผู้ใช้ส่งข้อความ
         if event["type"] == "message":
             user_id = event["source"]["userId"]
             text = event["message"].get("text")
