@@ -9,10 +9,7 @@ app = FastAPI()
 # ✅ CORS CONFIG
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",          # dev
-        "https://archikoo.vercel.app",    # prod (ถ้ามี)
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
