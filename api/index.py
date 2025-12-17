@@ -84,3 +84,10 @@ async def line_webhook(request: Request):
             send_line_message(user_id, "รับข้อความแล้วครับ 🙏")
 
     return {"status": "ok"}
+
+@app.get("/line/users")
+def get_line_users():
+    return {
+        "count": len(LINE_USERS),
+        "users": list(LINE_USERS)
+    }
