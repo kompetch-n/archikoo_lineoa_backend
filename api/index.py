@@ -27,8 +27,14 @@ LINE_API_URL = "https://api.line.me/v2/bot/message/push"
 # LINE_USERS = set()
 
 class NotifyOrderRequest(BaseModel):
-    order_id: str
     user_id: str
+    name: str
+    product_label: str
+    quantity: int
+    phone: str
+    address: str
+    note: str | None = None
+    image_url: str
 
 def send_line_message(user_id: str, message: str):
     headers = {
@@ -57,12 +63,26 @@ def health():
 
 @app.post("/notify-order")
 def notify_order(data: NotifyOrderRequest):
+
     message = f"""
-🛒 มีคำสั่งซื้อใหม่!
+🛒 คำสั่งซื้อใหม่ (ยืนยันแล้ว)
 ━━━━━━━━━━━━
-📄 Order ID: {data.order_id}
-✅ สถานะ: ยืนยันการสั่งซื้อแล้ว
+👤 ชื่อ: {data.name}
+📦 สินค้า: {data.product_label}
+🔢 จำนวน: {data.quantity}
+📞 โทร: {data.phone}
+
+🏠 ที่อยู่จัดส่ง
+{data.address}
+"""
+
+    if data.note:
+        message += f"\n📝 หมายเหตุ:\n{data.note}\n"
+
+    message += f"""
 ━━━━━━━━━━━━
+📷 สลิปชำระเงิน:
+{data.image_url}
 """
 
     status, result = send_line_message(data.user_id, message)
