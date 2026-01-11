@@ -26,8 +26,8 @@ LINE_API_URL = "https://api.line.me/v2/bot/message/push"
 class NotifyOrderRequest(BaseModel):
     user_id: str
     name: str
-    product_label: str
-    quantity: int
+    items: str                # ✅ รับเป็น string
+    total_price: int          # ✅ รับยอดรวม
     phone: str
     address: str
     note: str | None = None
@@ -65,8 +65,12 @@ def notify_order(data: NotifyOrderRequest):
 🛒 คำสั่งซื้อใหม่ (ยืนยันแล้ว)
 ━━━━━━━━━━━━
 👤 ชื่อ: {data.name}
-📦 สินค้า: {data.product_label}
-🔢 จำนวน: {data.quantity}
+
+📦 รายการสินค้า:
+{data.items}
+
+💰 ยอดรวม: {data.total_price:,} บาท
+
 📞 โทร: {data.phone}
 
 🏠 ที่อยู่จัดส่ง
@@ -89,6 +93,7 @@ def notify_order(data: NotifyOrderRequest):
         "line_status": status,
         "line_response": result
     }
+
 
 @app.post("/line/webhook")
 async def line_webhook(request: Request):
