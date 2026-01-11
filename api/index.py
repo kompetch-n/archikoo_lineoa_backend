@@ -64,21 +64,22 @@ def notify_order(data: NotifyOrderRequest):
     message = f"""
 🛒 คำสั่งซื้อใหม่ (ยืนยันแล้ว)
 ━━━━━━━━━━━━
-👤 ชื่อ: {data.name}
-
 📦 รายการสินค้า:
 {data.items}
 
 💰 ยอดรวม: {data.total_price:,} บาท
 
-📞 โทร: {data.phone}
-
-🏠 ที่อยู่จัดส่ง
+🏠 ข้อมูลจัดส่ง
+คุณ{data.name}
+โทร.{data.phone}
 {data.address}
 """
 
     if data.note:
-        message += f"\n📝 หมายเหตุ:\n{data.note}\n"
+        message += f"""
+📝 หมายเหตุ:
+{data.note}
+"""
 
     message += f"""
 ━━━━━━━━━━━━
@@ -93,7 +94,6 @@ def notify_order(data: NotifyOrderRequest):
         "line_status": status,
         "line_response": result
     }
-
 
 @app.post("/line/webhook")
 async def line_webhook(request: Request):
